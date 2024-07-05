@@ -1,12 +1,10 @@
 <script>
 	import Header from '../lib/components/Header.svelte';
-  import { successIcon, errorIcon } from '$lib/assets/icons';
-  import { fly } from 'svelte/transition'
+	import toast from 'svelte-french-toast';
 
   let contactInfo = $state({});
 
   let contactInfoForm;
-  let toastContainer;
 
   let toasts = $state([]);
 
@@ -44,27 +42,14 @@
     chrome.storage.local.set({ formFields }, function() {
       console.log('Settings saved');
     });
-
-    // Create new toast notification
-    const uid = crypto.randomUUID();
-
-    const newToast = {
-      id: uid,
-      msg: "Fields successfully saved!",
-      status: "success"
-    }
     
-    toasts.push(newToast);
+    // Show toast notification
+    toast.success("Fields successfully saved!");
 
     // Hide form
     setTimeout(() => {
       contactInfoForm.classList.remove('show');
     }, 500);
-
-    // remove item after given time period
-    setTimeout(() => {
-      toasts = toasts.filter(toast => toast.id !== uid);
-    }, 3000);
 
     // Send back form data
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
@@ -137,20 +122,6 @@
   <input type="submit" value="Save">
 </form>
 
-<div id="toast-container" bind:this={toastContainer}>
-  {#each toasts as toast}
-    <div id={`tst-${toast.id}`} class={`toast visible ${toast.status}`} transition:fly={{ y: -25, duration: 400 }}>
-      {#if toast.status === 'success'}
-        {@html successIcon} 
-      {:else if toast.status === 'error'}
-        {@html errorIcon} 
-      {/if}
-      {toast.msg}
-    </div>
-  {/each}
-  
-</div>
-
 <style>
   button {
     display: block;
@@ -161,33 +132,6 @@
     display: none;
     &.show {
       display: block;
-    }
-
-  }
-  #toast-container {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    .toast {
-      width: min(70vw, 300px);
-      background-color: var(--pico-secondary-background);
-      padding: 1rem;
-      margin-bottom: 0.25rem;
-      border-radius: 0.25rem;
-      
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      &.visible {
-        opacity: 1;
-      }
-      &.success {
-        color: #fff;
-        background-color: #408140;
-      }
-      &.error {
-        color: #fff;
-        background-color: #ff3c41;
-      }
     }
   }
 </style>
