@@ -3,19 +3,22 @@
 	import toast from 'svelte-french-toast';
 
   let contactInfo = $state({});
+  let settingsOpen = $state(false);
+
+  $effect(() => { console.log(settingsOpen) })
 
   let contactInfoForm;
 
-  let toasts = $state([]);
-
   $effect(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
-    chrome.storage.local.get(['formFields'], function(result) {
-      for (const [key, value] of Object.entries(result.formFields)) {
-        contactInfo[key] = value;
-        document.querySelector(`input[name="${key}"]`).value = result.formFields[key] || '';
-      }
-    });
+    if (settingsOpen) {
+      chrome.storage.local.get(['formFields'], function(result) {
+        for (const [key, value] of Object.entries(result.formFields)) {
+          contactInfo[key] = value;
+          document.querySelector(`input[name="${key}"]`).value = result.formFields[key] || '';
+        }
+      });
+    }
   });
 
   function prefillRegFields() {
@@ -55,83 +58,77 @@
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
   }
 
-  function toggleRegFields() {
-    contactInfoForm.classList.toggle('show');
-    return false;
+  function toggleSettings() {
+    settingsOpen = !settingsOpen;
   }
 
 </script>
 
-<Header toggleFunction={toggleRegFields} />
+<Header {toggleSettings} />
 
 <button id="fillRegFields" onclick={prefillRegFields}>Prefill Contact Info</button>
 <button id="fillDemoFields" onclick={prefillDemoFields}>Prefill Demos</button>
-<!-- <button id="updateContactInfo" onclick={toggleRegFields}>Update Form Fields</button> -->
 
-<form onsubmit={saveContactInfo} id="contact-info-form" bind:this={contactInfoForm}>
-  <fieldset>
-    <label for="FirstName">
-      First Name:<br>
-      <input type="text" name="FirstName" id="FirstName">
-    </label>
-    <label for="LastName">
-      Last Name:<br>
-      <input type="text" name="LastName" id="LastName">
-    </label>
-    <label for="Title">
-      Title:<br>
-      <input type="text" name="Title" id="Title">
-    </label>
-    <label for="Company">
-      Company:<br>
-      <input type="text" name="Company" id="Company">
-    </label>
-    <label for="Street">
-      Street:<br>
-      <input type="text" name="Street" id="Street">
-    </label>
-    <label for="Zipcode">
-      Zipcode:<br>
-      <input type="text" name="Zipcode" id="Zipcode">
-    </label>
-    <label for="City">
-      City:<br>
-      <input type="text" name="City" id="City">
-    </label>
-    <label for="State">
-      State:<br>
-      <input type="text" name="State" id="State">
-    </label>
-    <label for="Country">
-      Country:<br>
-      <input type="text" name="Country" id="Country">
-    </label>
-    <label for="Phone">
-      Phone:<br>
-      <input type="text" name="Phone" id="Phone">
-    </label>
-    <label for="CellPhone">
-      CellPhone:<br>
-      <input type="text" name="CellPhone" id="CellPhone">
-    </label>
-    <label for="Email">
-      Email:<br>
-      <input type="text" name="Email" id="Email">
-    </label>
-  </fieldset>
-  <input type="submit" value="Save">
-</form>
+{#if settingsOpen}
+  <form onsubmit={saveContactInfo} id="contact-info-form">
+    <fieldset>
+      <label for="FirstName">
+        First Name:<br>
+        <input type="text" name="FirstName" id="FirstName">
+      </label>
+      <label for="LastName">
+        Last Name:<br>
+        <input type="text" name="LastName" id="LastName">
+      </label>
+      <label for="Title">
+        Title:<br>
+        <input type="text" name="Title" id="Title">
+      </label>
+      <label for="Company">
+        Company:<br>
+        <input type="text" name="Company" id="Company">
+      </label>
+      <label for="Street">
+        Street:<br>
+        <input type="text" name="Street" id="Street">
+      </label>
+      <label for="Zipcode">
+        Zipcode:<br>
+        <input type="text" name="Zipcode" id="Zipcode">
+      </label>
+      <label for="City">
+        City:<br>
+        <input type="text" name="City" id="City">
+      </label>
+      <label for="State">
+        State:<br>
+        <input type="text" name="State" id="State">
+      </label>
+      <label for="Country">
+        Country:<br>
+        <input type="text" name="Country" id="Country">
+      </label>
+      <label for="Phone">
+        Phone:<br>
+        <input type="text" name="Phone" id="Phone">
+      </label>
+      <label for="CellPhone">
+        CellPhone:<br>
+        <input type="text" name="CellPhone" id="CellPhone">
+      </label>
+      <label for="Email">
+        Email:<br>
+        <input type="text" name="Email" id="Email">
+      </label>
+    </fieldset>
+    <input type="submit" value="Save">
+  </form>
+{/if}
 
 <style>
   button {
     display: block;
     width: 100%;
     margin-bottom: 0.25rem;
-  }
-  #contact-info-form {
-    display: none;
-    &.show {
-      display: block;
-    }
   }
 </style>

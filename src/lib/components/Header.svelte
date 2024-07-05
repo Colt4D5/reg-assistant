@@ -1,12 +1,12 @@
 <script>
-  let { toggleFunction } = $props();
+  let { toggleSettings } = $props();
   import { settingsIcon } from '$lib/assets/icons';
 </script>
 
 <header>
   <div class="inner">
     <h1>Reg Assist</h1>
-    <button onclick={toggleFunction}>{@html settingsIcon}</button>
+    <button onclick={toggleSettings}>{@html settingsIcon}</button>
   </div>
 </header>
 
