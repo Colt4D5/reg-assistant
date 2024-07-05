@@ -7,7 +7,7 @@
 
   $effect(() => { console.log(settingsOpen) })
 
-  let contactInfoForm;
+  let contactInfoForm = $state();
 
   $effect(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
@@ -50,9 +50,7 @@
     toast.success("Fields successfully saved!");
 
     // Hide form
-    setTimeout(() => {
-      contactInfoForm.classList.remove('show');
-    }, 500);
+    toggleSettings();
 
     // Send back form data
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
@@ -70,7 +68,7 @@
 <button id="fillDemoFields" onclick={prefillDemoFields}>Prefill Demos</button>
 
 {#if settingsOpen}
-  <form onsubmit={saveContactInfo} id="contact-info-form">
+  <form onsubmit={saveContactInfo} id="contact-info-form" bind:this={contactInfoForm}>
     <fieldset>
       <label for="FirstName">
         First Name:<br>
