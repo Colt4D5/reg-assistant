@@ -1,13 +1,14 @@
 <script>
+	import Header from '../lib/components/Header.svelte';
+  import { successIcon, errorIcon } from '$lib/assets/icons';
+  import { fly } from 'svelte/transition'
+
   let contactInfo = $state({});
 
   let contactInfoForm;
   let toastContainer;
 
   let toasts = $state([]);
-
-  import { successIcon, errorIcon } from '$lib/assets/icons';
-	import Header from '../lib/components/Header.svelte';
 
   $effect(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
@@ -56,7 +57,14 @@
     toasts.push(newToast);
 
     // Hide form
-    contactInfoForm.classList.remove('show');
+    setTimeout(() => {
+      contactInfoForm.classList.remove('show');
+    }, 500);
+
+    // remove item after given time period
+    setTimeout(() => {
+      toasts = toasts.filter(toast => toast.id !== uid);
+    }, 3000);
 
     // Send back form data
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
@@ -131,7 +139,7 @@
 
 <div id="toast-container" bind:this={toastContainer}>
   {#each toasts as toast}
-    <div id={`tst-${toast.id}`} class={`toast visible ${toast.status}`}>
+    <div id={`tst-${toast.id}`} class={`toast visible ${toast.status}`} transition:fly={{ y: -25, duration: 400 }}>
       {#if toast.status === 'success'}
         {@html successIcon} 
       {:else if toast.status === 'error'}
