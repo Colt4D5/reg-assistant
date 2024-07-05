@@ -15,7 +15,7 @@ if (searchForPhrase(phraseToSearch)) {
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.action === "fillRegFields") {
-      // console.log(request.data.data);
+      console.log(request.data.data);
       const contactInfo = request.data.data;
       const prefix = prompt("What identifier would you like to use?");
       for (const [key, value] of Object.entries(contactInfo)) {

@@ -1,28 +1,40 @@
 <script>
+	import { onMount } from 'svelte';
 	import Header from '../lib/components/Header.svelte';
 	import toast from 'svelte-french-toast';
 
-  let contactInfo = $state({});
+  let contactInfo = $state({
+    FirstName: '',
+    LastName: '',
+    Title: '',
+    Company: '',
+    Street: '',
+    Zipcode: '',
+    City: '',
+    State: '',
+    Country: '',
+    Phone: '',
+    CellPhone: '',
+    Email: ''
+  });
   let settingsOpen = $state(false);
-
-  $effect(() => { console.log(settingsOpen) })
 
   let contactInfoForm = $state();
 
-  $effect(() => { // we don't want this to run until the browser is loaded
+  onMount(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
-    if (settingsOpen) {
-      chrome.storage.local.get(['formFields'], function(result) {
-        for (const [key, value] of Object.entries(result.formFields)) {
+    chrome.storage.local.get(['formFields'], function(result) {
+      for (const [key, value] of Object.entries(result.formFields)) {
+        if (value.length > 0) {
           contactInfo[key] = value;
-          document.querySelector(`input[name="${key}"]`).value = result.formFields[key] || '';
         }
-      });
-    }
+      }
+    });
   });
 
   function prefillRegFields() {
     chrome.runtime.sendMessage({action: "fillRegFields", data: contactInfo});
+
   };
 
   function prefillDemoFields() {
@@ -50,7 +62,9 @@
     toast.success("Fields successfully saved!");
 
     // Hide form
-    toggleSettings();
+    setTimeout(() => {
+      toggleSettings();
+    }, 500);
 
     // Send back form data
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
@@ -72,51 +86,51 @@
     <fieldset>
       <label for="FirstName">
         First Name:<br>
-        <input type="text" name="FirstName" id="FirstName">
+        <input type="text" name="FirstName" id="FirstName" bind:value={contactInfo.FirstName}>
       </label>
       <label for="LastName">
         Last Name:<br>
-        <input type="text" name="LastName" id="LastName">
+        <input type="text" name="LastName" id="LastName" bind:value={contactInfo.LastName}>
       </label>
       <label for="Title">
         Title:<br>
-        <input type="text" name="Title" id="Title">
+        <input type="text" name="Title" id="Title" bind:value={contactInfo.Title}>
       </label>
       <label for="Company">
         Company:<br>
-        <input type="text" name="Company" id="Company">
+        <input type="text" name="Company" id="Company" bind:value={contactInfo.Company}>
       </label>
       <label for="Street">
         Street:<br>
-        <input type="text" name="Street" id="Street">
+        <input type="text" name="Street" id="Street" bind:value={contactInfo.Street}>
       </label>
       <label for="Zipcode">
         Zipcode:<br>
-        <input type="text" name="Zipcode" id="Zipcode">
+        <input type="text" name="Zipcode" id="Zipcode" bind:value={contactInfo.Zipcode}>
       </label>
       <label for="City">
         City:<br>
-        <input type="text" name="City" id="City">
+        <input type="text" name="City" id="City" bind:value={contactInfo.City}>
       </label>
       <label for="State">
         State:<br>
-        <input type="text" name="State" id="State">
+        <input type="text" name="State" id="State" bind:value={contactInfo.State}>
       </label>
       <label for="Country">
         Country:<br>
-        <input type="text" name="Country" id="Country">
+        <input type="text" name="Country" id="Country" bind:value={contactInfo.Country}>
       </label>
       <label for="Phone">
         Phone:<br>
-        <input type="text" name="Phone" id="Phone">
+        <input type="text" name="Phone" id="Phone" bind:value={contactInfo.Phone}>
       </label>
       <label for="CellPhone">
         CellPhone:<br>
-        <input type="text" name="CellPhone" id="CellPhone">
+        <input type="text" name="CellPhone" id="CellPhone" bind:value={contactInfo.CellPhone}>
       </label>
       <label for="Email">
         Email:<br>
-        <input type="text" name="Email" id="Email">
+        <input type="text" name="Email" id="Email" bind:value={contactInfo.Email}>
       </label>
     </fieldset>
     <input type="submit" value="Save">
