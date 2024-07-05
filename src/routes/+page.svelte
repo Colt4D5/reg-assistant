@@ -3,56 +3,13 @@
   let contactInfo = $state({});
 
   let contactInfoForm;
-  let toastContainer;
-
-  // class Toast {
-  //   constructor(container) {
-  //     this.container = container;
-  //     this.toasts = [];
-  //     this.successIcon = `<svg style="margin-right: 0.5rem;" width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  // <path fill-rule="evenodd" clip-rule="evenodd" d="M1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM18.4158 9.70405C18.8055 9.31268 18.8041 8.67952 18.4127 8.28984L17.7041 7.58426C17.3127 7.19458 16.6796 7.19594 16.2899 7.58731L10.5183 13.3838L7.19723 10.1089C6.80398 9.72117 6.17083 9.7256 5.78305 10.1189L5.08092 10.8309C4.69314 11.2241 4.69758 11.8573 5.09083 12.2451L9.82912 16.9174C10.221 17.3039 10.8515 17.301 11.2399 16.911L18.4158 9.70405Z" fill="currentColor"/>
-  // </svg>`;
-  //     this.errorIcon = `<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-1.5-5.009c0-.867.659-1.491 1.491-1.491.85 0 1.509.624 1.509 1.491 0 .867-.659 1.509-1.509 1.509-.832 0-1.491-.642-1.491-1.509zM11.172 6a.5.5 0 0 0-.499.522l.306 7a.5.5 0 0 0 .5.478h1.043a.5.5 0 0 0 .5-.478l.305-7a.5.5 0 0 0-.5-.522h-1.655z" fill="currentColor"/></svg>`;
-  //   }
-  //   add(newToast) {
-  //     this.toasts.push(newToast)
-  //     this.updateUI();
-    
-  //     setTimeout(() => {
-  //       // document.querySelector(`#tst-${newToast.id}`).classList.remove('visible');
-  //       this.toasts.find(toast => toast.id === newToast.id).classList.remove('visible');
-  //     }, 3000);
-
-  //     setTimeout(() => {
-  //       this.remove(newToast.id);
-  //     }, 3500);
-  //   }
-  //   remove(uid) {
-  //     this.toasts = this.toasts.filter(toast => toast.id !== uid);
-  //     this.updateUI();
-  //   }
-  //   updateUI() {
-  //     this.container.innerHTML = this.toasts.map(toast => {
-  //       return `
-  //         <div id="tst-${toast.id}" class="toast visible ${toast.status}">
-  //           ${toast.status === 'success' ? this.successIcon : ''}
-  //           ${toast.status === 'error' ? this.errorIcon : ''}
-  //           ${toast.msg}
-  //         </div>
-  //       `;
-  //     }).join('');
-  //   }
-  // }
-  
-    // const toast = new Toast(toastContainer);
 
   let toasts = $state([]);
 
-  $effect(() => {
+  $effect(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
     chrome.storage.local.get(['formFields'], function(result) {
       for (const [key, value] of Object.entries(result.formFields)) {
-        // console.log(key, value);
         contactInfo[key] = value;
         document.querySelector(`input[name="${key}"]`).value = result.formFields[key] || '';
       }
@@ -84,7 +41,7 @@
       console.log('Settings saved');
     });
 
-    // Show toast notification
+    // Create new toast notification
     const uid = crypto.randomUUID();
 
     const newToast = {
