@@ -1,38 +1,23 @@
-# create-svelte
+# Reg Assist Tool
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is a web browser extension build in Sveltekit with Bun to assist in ASP/VBScript development whilst developing registration forms.
 
-## Creating a project
+## Installation Instructions
 
-If you're seeing this, you've probably already done this step. Congrats!
+This extension is built on the Chrome v3 manifest but is also compatible with firefox, though installation will slightly differ depending on browser of choice.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### Chrome
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+1. Clone this repo with `git clone https://github.com/Colt4D5/reg-assistant.git`
+2. Enter the project directory and run `bun run build`. This will build the project and make it ready for installation to your browser.
+3. Visit `chrome://extensions` in your browser.
+4. Enable Developer Mode if not already enabled.
+   1. Will be a switch in top right on window.
+5. Select "Load Unpacked" and use the finder to select the "build" directory in within this project that was just created by the Bun bundler.
+6. Extension is now ready for use (instructions below).
 
-## Developing
+### Firefox
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Firefox has some odd security measures in place that does not allow local extensions to remain installed after the current session is over, so you may have to take some alternate actions, or you can just opt for Firefox Developer Edition or Firefox Nightly, both of which will allow you to keep local extensions enabled.
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Coming soon...
