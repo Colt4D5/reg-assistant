@@ -26,10 +26,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function sendMessageToContentScript(tabId, message) {
   chrome.tabs.sendMessage(tabId, message, function(response) {
-    if (chrome.runtime.lastError) {
-      console.log('Error: ', chrome.runtime.lastError.message);
-    } else {
-      console.log('Message sent, response: ', response);
-    }
+    // if (chrome.runtime.lastError) {
+    //   console.log('Error: ', chrome.runtime.lastError.message);
+    // } else {
+    //   console.log('Message sent, response: ', response);
+    // }
   });
 }
