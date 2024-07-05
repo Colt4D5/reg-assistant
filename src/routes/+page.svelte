@@ -1,10 +1,13 @@
 <script>
-  console.log("hellooo from svelte");
   let contactInfo = $state({});
 
   let contactInfoForm;
+  let toastContainer;
 
   let toasts = $state([]);
+
+  import { successIcon, errorIcon } from '$lib/assets/icons';
+	import Header from '../lib/components/Header.svelte';
 
   $effect(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
@@ -59,15 +62,18 @@
     chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
   }
 
-  function showRegFields(e) {
+  function toggleRegFields() {
     contactInfoForm.classList.toggle('show');
+    return false;
   }
 
 </script>
 
+<Header toggleFunction={toggleRegFields} />
+
 <button id="fillRegFields" onclick={prefillRegFields}>Prefill Contact Info</button>
 <button id="fillDemoFields" onclick={prefillDemoFields}>Prefill Demos</button>
-<button id="updateContactInfo" onclick={showRegFields}>Update Form Fields</button>
+<!-- <button id="updateContactInfo" onclick={toggleRegFields}>Update Form Fields</button> -->
 
 <form onsubmit={saveContactInfo} id="contact-info-form" bind:this={contactInfoForm}>
   <fieldset>
@@ -127,9 +133,9 @@
   {#each toasts as toast}
     <div id={`tst-${toast.id}`} class={`toast visible ${toast.status}`}>
       {#if toast.status === 'success'}
-        success! - 
+        {@html successIcon} 
       {:else if toast.status === 'error'}
-        error! - 
+        {@html errorIcon} 
       {/if}
       {toast.msg}
     </div>
