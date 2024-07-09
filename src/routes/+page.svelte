@@ -3,7 +3,7 @@
 	import Header from '../lib/components/Header.svelte';
 	import toast from 'svelte-french-toast';
 
-  let contactInfo = $state({
+  let contactInfo = {
     FirstName: '',
     LastName: '',
     Title: '',
@@ -16,58 +16,67 @@
     Phone: '',
     CellPhone: '',
     Email: ''
-  });
+  };
   let settingsOpen = $state(false);
 
-  let contactInfoForm = $state();
+  let contactInfoForm;
 
   onMount(() => { // we don't want this to run until the browser is loaded
     // Load existing settings
-    chrome.storage.local.get(['formFields'], function(result) {
-      for (const [key, value] of Object.entries(result.formFields)) {
-        if (value.length > 0) {
-          contactInfo[key] = value;
+    browser.storage.local.get(['formFields']).then(function(result) {
+      console.log(result);
+      if (Object.hasOwn(result, 'formFields')) {
+        for (const [key, value] of Object.entries(result.formFields)) {
+          if (value.length > 0) {
+            contactInfo[key] = value;
+          }
         }
       }
     });
   });
 
   function prefillRegFields() {
-    chrome.runtime.sendMessage({action: "fillRegFields", data: contactInfo});
-
+    browser.runtime.sendMessage({action: "fillRegFields", data: contactInfo});
   };
 
   function prefillDemoFields() {
-    chrome.runtime.sendMessage({action: "fillDemoFields"});
+    browser.runtime.sendMessage({action: "fillDemoFields"});
   };
 
   function saveContactInfo(e) {
     e.preventDefault();
 
-    const formFields = $state({});
+    const formFields = {};
 
-    for (const [key, value] of Object.entries(contactInfoForm.elements)) {
-      if (!Number(key) && key !== "0") {
-        formFields[key] = value.value;
-        contactInfo[key] = value.value;
-      }
-    }
+    // console.log(contactInfoForm);
 
+    // for (const [key, value] of Object.entries(contactInfoForm.elements)) {
+    //   if (!Number(key) && key !== "0") {
+    //     console.log(key, value);
+    //     formFields[key] = value.value;
+    //     contactInfo[key] = value.value;
+    //   }
+    // }
+
+
+    console.log(contactInfo);
     // Save to storage
-    chrome.storage.local.set({ formFields }, function() {
-      console.log('Settings saved');
-    });
+    browser.storage.local.set({ formFields: contactInfo })
+      .then(() => {
+        console.log('Settings saved');
+
+        // Show toast notification
+        toast.success("Fields successfully saved!");
     
-    // Show toast notification
-    toast.success("Fields successfully saved!");
-
-    // Hide form
-    setTimeout(() => {
-      toggleSettings();
-    }, 500);
-
-    // Send back form data
-    chrome.runtime.sendMessage({action: "updateContactInfo", data: formFields});
+        // Hide form
+        setTimeout(() => {
+          toggleSettings();
+        }, 500);
+    
+        // Send back form data
+        browser.runtime.sendMessage({action: "updateContactInfo", data: contactInfo});
+      });
+    
   }
 
   function toggleSettings() {

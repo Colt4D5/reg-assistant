@@ -5,14 +5,14 @@ function searchForPhrase(phrase) {
 
 const phraseToSearch = 'Microsoft VBScript runtime error';
 if (searchForPhrase(phraseToSearch)) {
-  chrome.runtime.sendMessage({action: "phraseFound", phrase: phraseToSearch});
+  browser.runtime.sendMessage({action: "phraseFound", phrase: phraseToSearch});
   createNotification();
 } else {
   // 
 }
 
 
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.action === "fillRegFields") {
       // console.log(request.data.data);
@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener(
 
       sendResponse({result: "Action completed"});
     } else if (request.action === "updateContactInfo") {
-      // console.log('Form submitted:', request.data.data);
+      console.log('Form submitted:', request.data.data);
       const contactInfo = request.data.data;
 
       sendResponse({result: "Action completed"});
